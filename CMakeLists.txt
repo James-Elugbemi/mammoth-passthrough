@@ -17,17 +17,27 @@ endif()
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
+find_package(PCL 1.3 REQUIRED)
+find_package(rclcpp REQUIRED)
 # uncomment the following section in order to fill in
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
+ 
+include_directories(${PCL_INCLUDE_DIRS})
+link_directories(${PCL_LIBRARY_DIRS})
+add_definitions(${PCL_DEFINITIONS})
+
 
 add_executable(passthrough src/passthrough_node.cpp)
-target_include_directories(passthrough_node PUBLIC
+ament_target_dependencies(passthrough rclcpp)
+
+target_include_directories(passthrough PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>)
+target_link_libraries(passthrough ${PCL_LIBRARIES})
 
 install(TARGETS passthrough
-  DESTINATION lib/${PROJECT_NAME})
+	DESTINATION lib/${PROJECT_NAME})
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
